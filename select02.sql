@@ -23,7 +23,7 @@ from dual;
 select '아침' || '점심'  || '저녁',  CONCAT( CONCAT('아침', '점심') , '저녁') -- 아침점심저녁
 from dual;
 
---SUBSTR(대상, 시작, 몇개)
+--SUBSTR(대상, 시작지점, 자리수)
 select
     SUBSTR('abcdef', 1, 3 ), -- abc
     SUBSTR('abcdef', 3, 5 ), -- cdef
@@ -37,7 +37,7 @@ select
 from student
 where deptno1 = 101;
 
---INSTR(대상, 찾는, 시작, 몇번째[1])--기본값이 1 
+--INSTR(대상, 찾는, 시작, 몇번째[1] ) --기본값이 1 
 select
     INSTR('2024/11/04 10/45/45', '/', 1), -- 5
     INSTR('2024/11/04 10/45/45', '/', 6), -- 8
@@ -83,14 +83,14 @@ from dual;
 
 ----
 SELECT 
-    ROUND(1.66,1),
-    TRUNC(1.456,2),
-    TRUNC(1.4567,0),
-    TRUNC(123.4567,-1),
-    MOD(15,4),
-    CEIL(123.13),
-    FLOOR(123.1333),
-    POWER(3,5)
+    ROUND(1.66,1), --1.7
+    TRUNC(1.456,2), --1.45
+    TRUNC(1.4567,0), --1
+    TRUNC(123.4567,-1), --120
+    MOD(15,4), --3
+    CEIL(123.13), --124
+    FLOOR(123.1333), --123
+    POWER(3,5) --243
 FROM dual;
 
 select
@@ -104,13 +104,13 @@ from emp;
 SELECT
         null,
         SYSDATE, --현재날짜시간 
-        SYSTIMESTAMP,
-        MONTHS_BETWEEN('2024-01-05','2024-03-05'),
-        MONTHS_BETWEEN('2024-03-05','2024-01-05'),
+        SYSTIMESTAMP, --24/11/04 17:02:41.460000000 +09
+        MONTHS_BETWEEN('2024-01-05','2024-03-05'),-- -2
+        MONTHS_BETWEEN('2024-03-05','2024-01-05'), --2
         ADD_MONTHS(SYSDATE, 3), -- 11/4 -> 3개월후
         LAST_DAY(SYSDATE), --
-        NEXT_DAY(SYSDATE,'수'),
-        NEXT_DAY(SYSDATE,'토')
+        NEXT_DAY(SYSDATE,'수'), -- 11/6
+        NEXT_DAY(SYSDATE,'토') -- 11/9
 FROM dual;
 
 SELECT
@@ -133,10 +133,10 @@ SELECT
 FROM dual;
 
 ----------------
-SELECT 2 + '2' --자동형변환
+SELECT 2 + '2' --4 --자동형변환 
 FROM dual;
 
-SELECT 2 || '123a'
+SELECT 2 || '123a' --2123a
 FROM dual;
 
 SELECT 
@@ -160,6 +160,89 @@ SELECT
         TO_CHAR( ROUND(SYSDATE), 'YYYY-MM-DD HH24:MI:SS')
 FROM dual;
 
+SELECT 
+    TO_CHAR(1234, '999999'),
+    TO_CHAR(1234, '099999'),
+    TO_CHAR(1234, '$99999'),
+    '$' || 1234,
+    TO_CHAR(1234, '99999.99'),
+    TO_CHAR(1234, '99,999')
+FROM dual;
+
+SELECT 
+        TO_DATE('2024-06-02')+3,
+        TO_DATE('2024/06/02')+3,
+        TO_DATE('24/06/02')+3,
+        TO_DATE('20240602')+3,
+        LAST_DAY('2024-08-05'),
+        TO_DATE('24:06:02')+3,
+        TO_CHAR(SYSDATE,'YYYY/MM/DD'),
+        TO_DATE('2024-01-05','YYYY-MM-DD'),
+        TO_DATE('2024,01,05','YYYY,MM,DD'),
+        TO_DATE('12/10/20','MM/DD/YY')
+FROM dual;
+
+--NVL
+SELECT 
+        sal,
+        comm,
+        sal*12+comm,
+        sal*12+NVL(comm,0)
+FROM emp;
+
+SELECT
+        NVL(null,0),
+        NVL2(123,'있다','없다'),
+        NVL2(NULL,'있다','널이다')
+FROM dual;
+
+--DECODE
+
+SELECT
+        DECODE(10, 10, '같다', '다르다'),
+        DECODE(10, 20, '같다', '다르다'),
+        DECODE(10, 20, '같다'), --DECODE(10, 20, '같다', NULL)
+        DECODE(10, 20, '같다', NULL),
+        DECODE(10, 30, '30이다', 40, '40이다', 50, '50이다', '아니다'),
+        DECODE(10, 30, '30이다', 40, '40이다', 50, '50이다', 60, '60이다', '아니다'),
+        DECODE(10, 30, '30이다', 40, '40이다', 50, '50이다', 60, '60이다', NULL),
+        DECODE(10, 30, '30이다', 40, '40이다', 50, '50이다', 60, '60이다')
+FROM dual;
+
+SELECT 
+    deptno, name,
+    DECODE(deptno, 101, '컴공', '다른과'),
+    DECODE(deptno, 101, '컴공', 'ETC'),
+    DECODE(deptno, 101, '컴공'),
+    DECODE(deptno, 101, '컴공', null)
+FROM student;
+
+SELECT 
+    deptno, name,
+    DECODE(deptno, 101, '컴공',102, '멀미',103,'소웨', 'etc')
+FROM professor;
+
+--CASE
+
+--grade 
+--학년 1 2 3 
+SELECT  grade || '학년'
+FROM student;
+
+--1 2 저학년 3 4 고학년
+SELECT 
+    DECODE(GRADE, 1,'저학년',2,'저학년', 3, '고학년', 4, '고학년') 학년구분,
+    CASE grade
+        WHEN 1 THEN '저학년'
+        WHEN 2 THEN '저학년'
+        WHEN 3 THEN '고학년'
+        WHEN 4 THEN '고학년'
+    END AS "학년구분",
+    CASE
+        WHEN grade IN (1, 2) THEN '저학년' 
+         WHEN grade BETWEEN 3 AND 4 THEN '고학년'
+    END 학년구분
+FROM student;
 
 
 
