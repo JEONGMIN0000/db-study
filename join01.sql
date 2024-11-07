@@ -163,3 +163,14 @@ from student;
 select *
 from professor;
 
+select *
+from emp;
+
+
+--내 사번, 내이름, 내 상사의 사번, 상사의 이름
+select e1.empno, e1.ename, e1.mgr, e2.empno, e2.ename
+from emp e1, emp e2
+where e1.mgr = e2.empno;
+
+
+select * from emp2;
