@@ -5,6 +5,8 @@
 --데이터 삭제 DELETE
 --데이터 병합 MERGE
 
+select * from new_table;
+
 INSERT INTO 테이블명 (컬럼명...)
 VALUES (데이터 값...);
 
@@ -31,7 +33,22 @@ VALUES (6, '이름6');
 INSERT INTO new_table 
 VALUES (7, '이름7', null);
 
----
+---여러개를 동시에 삽입(저장) INSERT ALL
+select * from tt02;
+
+INSERT ALL
+INTO tt02 VALUES (7, '이름7', null)
+INTO tt02 VALUES (8, '이름7', null)
+INTO tt02 VALUES (9, '이름7', null)
+INTO tt02 VALUES (10, '이름7', null)
+select * from dual;
+
+INSERT INTO tt02    --number3 varchar2 date
+SELECT 11, '샘플', SYSDATE FROM dual;
+
+INSERT INTO tt02
+select deptno, loc, SYSDATE  from dept;
+
 
 INSERT INTO tt02 (no)
 VALUES (1);
